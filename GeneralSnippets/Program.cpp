@@ -62,7 +62,7 @@ int main()
         //main_initializer_list();
         //main_input_output_streams();  
         //main_invoke();
-        //main_lambdas();
+        main_lambdas();
         //main_lambda_and_closure();
         //main_lambdas_this_closure();
         //main_literals();
@@ -89,7 +89,7 @@ int main()
         //main_sso();
         //main_static_assert();
         // 
-        main_stl();
+        //main_stl();
         // 
         //main_string_view();
         //main_structured_binding();

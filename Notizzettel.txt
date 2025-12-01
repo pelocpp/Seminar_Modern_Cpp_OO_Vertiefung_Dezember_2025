@@ -374,4 +374,61 @@ Funktor // Aufrufbares Objekt
 
 Was ist ein aufrufbares Objekt // Callable
 
-15:35
+============================================
+
+Lambda: 
+
+Was ist ein Lambda:
+
+Kurz und schnell: Eine anonyme Inline-Funktion.
+
+Exakt und ausführlich  // Verständnis.
+
+Was ist ein Lambda: Ein OBJEKT !!!!
+
+Von welcher Klasse ???
+
+Diese wird vom Compiler in der aktuellen Funktion // Methode
+als eine Klasse mit dem Aufruf-Operator operator() hinzugefügt.
+
+Über auto haben wir die einzige Möglichkeit,
+Klassen zu verwenden, die ein Lamba-Objekt definieren.
+
+Sie bleibt / ist für uns anonym.
+
+Tool:  Cpp Insights  // Blick hinter die Kulissen von Modern C++
+
+https://cppinsights.io/
+
+Prä-Compiler:  Converter: Modern C++ ==> Classic C++
+
+
+// =====================================================
+
+std::function
+
+Class template std::function is a general-purpose polymorphic function wrapper. 
+
+ wrapper  // Hülle
+
+ Lambdas sind anonyme Objekte:
+
+ es gibt 2 Möglichkeiten, mit ihnen zu arbeiten:
+
+ a) via auto Variablen / Objekte
+
+ b) via std::function Variablen / Objekte
+
+ Was ist - wenn es geht - zu bevorzugen:   a)
+
+ Why: auto leitet den Typ der Klasse ab: Das Lambda-Objekte IST von diesem Typ.
+ 
+ b)  std::function ist eine HÜLLE !!!
+
+
+ =======================================================
+ 
+ Objekte bestehen aus Methoden und Membervariablen.
+ 
+ Wo sind die Membervariablen eines Lambda-Objekts :)
+

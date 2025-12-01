@@ -166,27 +166,24 @@ namespace Lambdas {
 
     static void test_07() {
 
-        // defining new variables in the lambda capture:
-        // we can declare a new variable that is only visible
-        // in the scope of the lambda: We do so by defining a variable
-        // in the lambda-capture without specifying its type:
+       // auto variable = 10;
 
-        // lambda with variable definition
-        auto lambda = [variable = 10] () { return variable; };
-        std::cout << lambda() << std::endl;
+        // lambda with member variable definition
+        auto lambda = [variable = 10] () mutable  -> int {
 
-        // Captures default to 'const value':
-        // The mutable keyword removes the 'const' qualification from all captured variables
-        auto counter = [count = 50] () mutable { 
-            ++count; 
-            return count;
+          //  int variable = 10;   // lokale Variable
+            variable++;
+            return variable; 
         };
 
-        for (size_t i{}; i < 5; ++i) {
-            std::cout << counter() << " ";
-        }
-        std::cout << std::endl;
+       // variable = 999;
+
+        std::cout << lambda() << std::endl;
+        std::cout << lambda() << std::endl;
+        std::cout << lambda() << std::endl;
     }
+
+    static void tueWas (int a, int b) {}
 
     static void test_08() {
 
@@ -196,6 +193,17 @@ namespace Lambdas {
         auto l1 = [=] {
             std::cout << "Copy:      " << n << " " << m << std::endl;
         };
+
+        void (*fp) (int, int) = tueWas;
+
+        std::function < void() > func {
+            [=]() { std::cout << "A Lambda: " << n << " " << m << std::endl; }
+        };
+
+        // Beispiel einer Warteschlange von Methoden
+        std::vector< std::function < void() > > myMessages;
+
+        func();
 
         auto l2 = [&] {
             std::cout << "Reference: " << n << " " << m << std::endl;
@@ -239,7 +247,7 @@ namespace Lambdas {
             std::cout << "Reference: " << n << " " << m << std::endl;
         };
 
-        return lambda;  // I would't do this never ever :-)
+        return lambda;                                                   // I would't do this never ever :-)
     }
 
     static void test_09() {
@@ -357,20 +365,20 @@ namespace Lambdas {
 void main_lambdas()
 {
     using namespace Lambdas;
-    test_00();
-    test_01();
-    test_02();
-    test_03();
-    test_04();
-    test_05();
-    test_06();
+    //test_00();
+    //test_01();
+    //test_02();
+    //test_03();
+    //test_04();
+    //test_05();
+    //test_06();
     test_07();
-    test_08();
-    test_09();
-    test_10();
-    test_11();
-    test_12();
-    test_13();
+    //test_08();
+   // test_09();
+    //test_10();
+    //test_11();
+    //test_12();
+    //test_13();
 }
 
 // =====================================================================================

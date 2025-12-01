@@ -188,7 +188,37 @@ static void main_stl_07()
 	);
 }
 
+static void main_stl_08()
+{
+	class __lambda_18_3
+	{ };
+
+
+	std::deque<int> numbers;
+
+	numbers.push_back(1);
+	numbers.push_back(2);
+	numbers.push_back(3);
+
+	//auto myLambda = [](int value) {
+	//	std::println("{:3}", value);
+	//	};
+
+	std::string header{">>>"};
+
+	// Habe 2 Optionen, um die lokale Variable header in einem Lambda-Objekt
+	// zu verwenden:
+	// a) als Kopie oder b) über eine Referenz
+	std::for_each(
+		numbers.begin(),
+		numbers.end(),
+		[=] (int value) { 
+			std::println("{}{:3}", header, value);
+		}
+	);
+}
+
 void main_stl()
 {
-	main_stl_07();
+	main_stl_08();
 }
