@@ -11,6 +11,8 @@ import std;
 
 #pragma message(MessageText)
 
+void main_stl();
+
 int main()
 {
     //extern int _main_modules();
@@ -29,10 +31,10 @@ int main()
         //main_array();
         //main_array_decay();
         //main_attributes();
-        //main_auto();
+     //   main_auto();
         //main_back_inserter();
         //main_bind();
-        //main_brace_initialization();
+      //  main_brace_initialization();
         //main_casts();
         //main_common_type();
         //main_concepts_requires_classes();
@@ -69,7 +71,7 @@ int main()
         //main_metaprogramming_02(); 
         //main_modularized_standard_library(); 
         //main_modules();
-        //main_move_semantics();
+       // main_move_semantics();
         //main_optional();
         //main_perfect_forwarding();
         //main_placement_new();
@@ -86,6 +88,9 @@ int main()
         //main_source_location();
         //main_sso();
         //main_static_assert();
+        // 
+        main_stl();
+        // 
         //main_string_view();
         //main_structured_binding();
         //main_templates_class_basics_01();

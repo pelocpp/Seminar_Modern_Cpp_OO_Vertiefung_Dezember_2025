@@ -5,3 +5,373 @@ Seminar "Modern C++"
 Peter Loos
 
 ==========================================
+
+30+ Jahren SW  // Development // Training
+
+C/C++, Java, C#, JavaScript, Mobile Programming
+
+Back-to-the-Roots: Classic C++ ==> Modern C++
+
+==========================================
+
+ToDo-Liste:
+
+noexcept
+
+
+==========================================
+
+Seminarinhalt
+
+Vertiefung Objektorientierung
+Pure virtuelle Methoden
+Polymorphie
+
+Neuerungen ab C++11 (Konstruktorvererbung, Initialisiererlisten)
+Neue Sprachelemente mit C++11/14/17/20
+Range-basierte for-Schleife
+auto
+decltype
+RValues und Move-Semantik
+Lambdafunktionen
+Smart Pointer (C++11)
+Variadic Templates
+constexpr, constexpr if
+Automatischer Rückgabetyp
+Stark typisierte enums
+Die neuen Möglichkeiten der using-Direktive
+
+Standard Template Library // STL 
+Containern // std::vector
+Iteratorkonzept
+Algorithmen  std::for_each, std::fill, std::copy, ...
+Funktoren
+Container (z.T. C++11)
+Funktionen (z.T. C++11)
+
+Die Thread Unterstützung der Standardbibliothek (C++11)
+Reguläre Ausdrücke (C++11)
+Parallele Algorithmen (C++17)
+std::optional, std::variant, std::any (C++17)
+
+==========================================
+
+== Was sind meine Erwartungen
+
+== Wo stehe ich ... 
+
+== Was MUSS DRIN sein ...
+
+== Überblick über das Moderne 
+
+== OO // Fehlt da noch was // OOP Vertiefung
+
+Lambda // Parallelisierung
+
+==========================================
+
+Vormittag // Nachmittag // Kaffeepause
+
+12.30
+
+17 Uhr
+
+==========================================
+
+Wie gestalte ich dieses Seminar:
+
+2 Tools
+
+A) Visual Studio
+
+   Jet Brains //
+
+B) GitHub
+
+==========================================
+
+Fragen ...............................
+
+==========================================
+
+Roter Faden .........
+
+==========================================
+
+Verschiebe-Semantik (Move-Semantik)
+
+i)  Referenz: Neuzugang: Neue Referenz
+
+    RValue - Referenz:    Syntax  Typ &&
+
+    a + b:   Ist ein std::string Objekt, aber OHNE Namen
+
+             Temporäres Objekt
+
+ii) Was ist verschieben?
+
+Whyyyyyyyyyyyyyyyyyyyyyyyyyyy  ???
+
+==============================================
+
+Verschieben
+
+Beispiel:
+
+...: ... 8D0
+
+
+
+Kopier-Konstruktor:
+
+a) Der kopiert ein Objekt
+
+b) Müssen wir den immer pro Klasse selber schreiben ???
+
+   Depends: ...
+
+   Sind in der Klasse dynamisch erzeugte Variablen // Daten vorhanden (new) ?????????????
+
+c) Müssen wir den immer pro Klasse selber schreiben ???
+
+   Dieser wird auch vom Compiler in einer automatisch erzeugten Version
+   bereitgestellt.
+
+   Wie: Es werden alle Bytes (Variablen, Daten) UMKOPIERT
+
+   Können wir diese Version immer nehmen ???
+
+   Depends:
+
+   Bei elementaren Variablen sind diese Byte-Kopien perfekt.
+
+   Bei mit new angelegten Adressen ZUNÄCHST auch noch,
+   wenn gleich über die Adresse auf dem HEAP KEINE Kopie angelegt wird.
+
+   Beim delete im Destruktor ist die Byte-Weise Kopie der Adresse FALSCH !!!!
+
+   FAZIT:
+   In diesem Fall ( mit new angelegte Adressen sind vorhanden)
+   müssen wir den Kopier-Konstruktor selbst schreiben !!!
+
+==============================================
+
+ACHTUNG:   Java
+
+    void testPointInJava()
+    {
+        Point p = new Point (1,2);
+
+        Point p2 = new Point (p);  // p2 ist KOPIE von p
+
+        p2 = p;  // Hier wird eine Adresse umgebogen
+    }
+
+    Was sind p und p2 in Java (C#):  REFERENZEN
+
+    void testPointInCpp()
+    {
+        Point p (1,2);
+
+        Point p2 (p);  // p2 ist KOPIE von p
+
+        p2 = p;  // Hier wird eine Adresse umgebogen
+    }
+
+
+===========================================================
+
+C++:
+
+new // delete
+
+Sind die Anweisungen aus "Classic C++", um Speicher AUF DEM HEAP
+zu bekommen.
+
+Modern C++: Hier gibt es die Smart Pointer,
+um das delete nicht zu vergessen.
+
+===========================================================
+ 
+Verschieben:.
+
+... BE0    // liegt am Stack   // wird jetzt freigegeben // anonym // ben.def. K'stor
+... A20    // liegt im Vektor  // Kopier-Konstruktor
+
+
+Beobachtung: Es wurden für EINEN push_back Aufruf ZWEI BigData Objekte angelegt.
+
+Kann man das vermeiden / besser machen ???????????????
+
+Ja: C++ 11: Verschiebe-Semantik
+
+-----------------
+
+... 710    // liegt am Stack   // anonym // wird jetzt auf NULL gesetzt
+
+Es kommt zu einem zweiten Konstruktor-Aufruf
+
+Fazit:
+
+a) Höre zum ersten Mal vom Verschieben:
+
+   Ohne Verschieben:
+
+   Geht, kein Problem:  Überflüssige Kopien ...
+
+b) Lebenszyklus-Methoden in C++
+
+   Rule of Three
+
+      Destruktor
+      Kopier-Konstruktor
+      Operator operator= (Wertzuweisung)
+
+    Müssen wir diese beachten / implementieren:
+
+    Ja, wenn dynamische (new/delete) Variablen vorhanden sind.
+
+
+    Rule of Five
+
+    Rule of Three + 2 mal Verschieben (Kopier-Konstruktor // operator= )
+
+    Rule of Zero:
+
+    Wann ?????????????????????
+
+    Fragen ??????????
+
+    ====================
+
+    Schlüsselwort auto
+
+
+auto und Clean-Code ????????????
+
+Gute Frage:
+
+Pro / Contra:
+
+Pro: Kompaktere Schreibweise // automatische Typanpassung
+
+Contra:   Man sollte /muss immer wissen, mit welchem Typ habe 
+          ich es eigentlich zu tun !!!!!!!!
+
+auto ist manchmal sogar eine gute Unterstützung bei Übersetzungsfehlern !!!
+
+=====================
+
+// old, "classical" syntax
+std::string toString(int value);
+
+// new syntax with trailing return type
+auto toString(int value) -> std::string;
+
+Whyyyyyyyyyyyyyyyyyyyyyyyyyyy ???
+
+
+Typkonvertierung für elem. Datentypen
+
+Beispiel:
+
+int , long ==> long
+float , double ==> double
+short, long ==> long
+
+...
+
+ergebnistyp result = a+b
+
+/////////
+
+Neue Form der Initialisierung
+
+== Einheitliche Initialisierung
+
+== Brace Initialization  <==
+
+Initialisierung: 
+
+Re-Design
+========   Neue Syntax  // Legacy Code
+
+
+
+        double d1 = ival;      // Compiles
+00007FF7B15ACBB0  cvtsi2sd    xmm0,dword ptr [ival]  
+00007FF7B15ACBB5  movsd       mmword ptr [d1],xmm0  
+
+int:    2-er Komplement
+double: IEEE Format
+
+        int intArray7[10]{ };  // ist das besser als eine for-Schleife / egal
+00007FF6C86FDD79  lea         rax,[intArray7]  
+00007FF6C86FDD80  mov         rdi,rax  
+00007FF6C86FDD83  xor         eax,eax  
+00007FF6C86FDD85  mov         ecx,28h  
+00007FF6C86FDD8A  rep stos    byte ptr [rdi]  
+
+Beachte: rep - Präfix in der Zeile zuvor  // repeat // Effiziente Befehle
+
+Resümee:
+
+Legacy-Code: Würde ich nicht anfassen.
+
+Neuer Code:  Würde ich einheitlich mit Brace-Init entwickeln
+
+=================================================================
+
+STL
+
+Blick hinter die Kulisse
+
+std::vector:
+
+   Capacity
+
+   9, 13, 19, 28, 42, 63
+
+ Strategie:  neuer Wert = alter Wert * 1.5 
+
+ =====================================================
+
+ STL
+
+ Container
+
+ Zugriff mit operator[] auf einen Container
+
+ Ist eigentlich nur für einen Spezialfall vorhanden:
+    Wenn die Daten DICHT HINTEREINANDER im Speicher liegen
+    konsekutiv
+
+Mit Gewalt könnte man den operator[] auch für eine Liste (Linked List) realisieren.
+
+STL: Aussage:  O(n) Notation  
+
+operator[]: Schlechte Performanz
+
+
+Welche Methoden besitzen Iteratoren:
+
+Java:
+
+next()
+value()
+equals()
+
+C++:      // Operatoren
+
+operator++
+operator*
+operator==
+
+STL Container
+STL Iterator
+STL Algorithmus
+Funktor // Aufrufbares Objekt
+
+Was ist ein aufrufbares Objekt // Callable
+
+15:35

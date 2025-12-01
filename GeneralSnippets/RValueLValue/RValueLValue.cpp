@@ -6,7 +6,7 @@ module modern_cpp:rvalue_lvalue;
 
 namespace LValueRValue {
 
-    // lvalue reference
+    // lvalue reference 
     static void sayHello(std::string& message) {
         std::println("sayHello [std::string&]:  {}", message);
     }
@@ -19,23 +19,35 @@ namespace LValueRValue {
     static void test01() {
 
         std::string a = "Hello";
+
         std::string b = " World";
 
         sayHello(a);
-        sayHello(a + b);
+        // a.append ..........
+                          //     std::string
+        sayHello(a + b);  // + : Konkatenation a+b: "Hello World"
+        // hier ist a+b nicht mehr verfügbar
     }
 
     // -------------------------------------------------------------------
 
-    static void helper(std::string&& message)
+    static void helper(std::string&& message)  // RValue Referenz
     {
-        sayHello(message);
-        // sayHello(std::move(message));    // casting an lvalue to an rvalue
+        sayHello(message);  // hmmm, welches wird aufgerufen ????
+                            // A) &&: message ist vom Typ std::string&&
+                            // B) &:  Der Parameter IST ein Name
+     
+    
+        sayHello( std::move ( message ) );
     }
 
     static void test02()
     {
-        helper(std::string("Where are we going ..."));
+        std::string a ("ABC");
+
+        // helper(a);  // mit a ??? NEIN
+
+        helper(std::string("Where are we going ..."));  // Kein Namen
     }
 
     // -------------------------------------------------------------------

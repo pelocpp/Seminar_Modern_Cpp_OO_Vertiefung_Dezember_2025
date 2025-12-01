@@ -2,9 +2,76 @@
 // Move Semantics
 // =====================================================================================
 
+module;
+
+#include <cstring>
+#include <print>
+
 module modern_cpp:move_semantics;
 
 namespace MoveSemantics {
+
+    // Grundlagen OO bzgl. C++
+    // Java: Interface IClonable // clone
+
+    class MyString
+    {
+    public:
+        // extrem einfach // nur zum Demonstrieren
+        MyString() {
+            m_string = new char[6];
+            strcpy_s(m_string, 6, "ABCDE");
+        }
+
+        MyString(const MyString& other) {
+            // Ist im Prinzip falsch .. weil von other keine Kopie erzeugt wird
+            m_string = new char[6];
+            strcpy_s(m_string, 6, "ABCDE");
+        }
+
+        // Ein Destruktor wird am ENDE des Scopes AUTOMATISCH aufgerufen
+        ~MyString() {
+            delete[] m_string;
+        }
+
+    private:
+        char* m_string;
+    };
+
+    class Point
+    {
+    public:
+        Point (int x, int y) : m_x(x), m_y(y) {}
+
+        // Wir schreiben den Kopierkonstruktor selbst
+        // Whyyyyyyyyyyyyyyyyy
+        //Point( const Point& other)
+        //{
+        //    m_x = other.m_x;
+        //    m_y = other.m_y;
+        //}
+
+        int m_x;
+        int m_y;
+    };
+
+    void testMyString()
+    {
+        MyString dummy;
+
+        MyString dummy2(dummy);  // dummy2 ist KOPIE von dummy
+
+        // Der Kopier-Konstruktor wurde AUTOMATISCH erzeugt 
+    }
+
+    void testPoint()
+    {
+        Point p(1,2);
+
+        Point p2(p);  // p2 ist KOPIE von p
+
+        // Der Kopier-Konstruktor wurde AUTOMATISCH erzeugt 
+    }
 
     class BigData
     {
@@ -24,8 +91,8 @@ namespace MoveSemantics {
         BigData& operator= (const BigData&);      // copy assignment
 
         // move semantics
-        //BigData(BigData&&) noexcept;              // move c'tor
-        //BigData& operator= (BigData&&) noexcept;  // move assignment
+        BigData(BigData&&) noexcept;              // move c'tor
+        BigData& operator= (BigData&&) noexcept;  // move assignment
 
     private:
         // private helper methods
@@ -93,15 +160,15 @@ namespace MoveSemantics {
     // -------------------------------------------------------------------
 
     // move semantics
-    //BigData::BigData(BigData&& data) noexcept {  // move c'tor
+    BigData::BigData(BigData&& data) noexcept {  // move c'tor
 
-    //    std::println("move c'tor");
+        std::println("move c'tor");
 
-    //    m_data = data.m_data;   // shallow copy
-    //    m_size = data.m_size;
-    //    data.m_data = nullptr;  // reset source object, ownership has been moved
-    //    data.m_size = 0;
-    //}
+        m_data = data.m_data;   // shallow copy
+        m_size = data.m_size;
+        data.m_data = nullptr;  // reset source object, ownership has been moved
+        data.m_size = 0;
+    }
 
     // alternate realisation
     //BigData::BigData(BigData&& data) noexcept {  // move c'tor
@@ -110,17 +177,17 @@ namespace MoveSemantics {
 
     // -------------------------------------------------------------------
 
-    //BigData& BigData::operator= (BigData&& data) noexcept { // move-assignment
+    BigData& BigData::operator= (BigData&& data) noexcept { // move-assignment
 
-    //    if (this != &data) {
-    //        delete[] m_data;        // release left side
-    //        m_data = data.m_data;   // shallow copy
-    //        m_size = data.m_size;
-    //        data.m_data = nullptr;  // reset source object, ownership has been moved
-    //        data.m_size = 0;
-    //    }
-    //    return *this;
-    //}
+        if (this != &data) {
+            delete[] m_data;        // release left side
+            m_data = data.m_data;   // shallow copy
+            m_size = data.m_size;
+            data.m_data = nullptr;  // reset source object, ownership has been moved
+            data.m_size = 0;
+        }
+        return *this;
+    }
 
     // alternate realisation
     //BigData& BigData::operator= (BigData&& data) noexcept { // move-assignment
@@ -174,7 +241,14 @@ namespace MoveSemantics {
     static void test_02_demonstrate_move_ctor() {
 
         std::vector<BigData> vec;
-        vec.push_back(BigData(10, 1));
+
+        BigData obj (10, 1);
+
+  //      vec.push_back(obj);
+        // obj.   ......................
+
+        // vs.
+        vec.push_back(BigData (10, 1));
     }
 
     static void test_03_demonstrate_move_assignment() {
@@ -202,9 +276,14 @@ namespace MoveSemantics {
     }
 }
 
-void main_move_semantics()
+void main_move_semantics() 
 {
     using namespace MoveSemantics;
+
+    //testMyString();
+    ////testPoint();
+   // return;
+
     test_01_move_semantics();
     test_02_demonstrate_move_ctor();
     test_03_demonstrate_move_assignment();

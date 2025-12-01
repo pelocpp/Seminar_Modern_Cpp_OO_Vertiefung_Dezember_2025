@@ -10,6 +10,16 @@ namespace Auto_Examples {
 
     static void test_01() {
 
+        //  JavaScript
+        //var n;
+
+        //// Python
+        //n = 123     // Typ zur Laufzeit
+        //n = "asdfsdf"
+
+        auto n = std::string("sdfsddsfd");   // Type Deduction // Typableitung
+
+
         // type deduction / type inference
 
         auto a = 1;                  // int
@@ -41,13 +51,11 @@ namespace Auto_Examples {
 
     static void test_02() {
 
-        auto n{ 123 };                   // n is type of int
+        auto n = 123 ;                   // n is type of int
 
-        auto result{ getFunction() };    // result is type of ...
+        auto result = getFunction();    // result is type of ... ???
 
-        std::map<int, std::string> result2 {
-            getFunction()
-        };
+        std::map<int, std::string> result2 = getFunction();
     }
 
     // ---------------------------------------------------------------------
@@ -56,11 +64,17 @@ namespace Auto_Examples {
 
         std::map<int, std::string> anotherMap{ { 1, "Hello"  } };
 
+          // Einträge:
+          // std::pair<int, std::string>
+
+        // Ein Iteratoren-Objekt beschreibt eine POSITION
+        // Wie komme ich zum WERT hinter der Position? Mit * Operator
+
         std::map<int, std::string>::iterator it = anotherMap.begin();
 
-        // std::pair<int, std::string>& entry1 = *it;  // Why this line DOES NOT compile ???
+   //     std::pair<int, std::string>& entry1 = *it;  // Why this line DOES NOT compile ???
 
-        auto& entry2 = *it;
+        auto& entry2 = *it;   // Typleitung
     }
 
     // ---------------------------------------------------------------------
@@ -69,6 +83,45 @@ namespace Auto_Examples {
     {
         return f1 + f2;
     }
+
+    //static auto tueWas ( bool flag, float f, double d) -> double
+    //{
+    //    if (flag) {
+    //        return d;
+    //    }
+    //    else {
+    //        return f;
+    //    }
+    //}
+
+    //template <typename T, typename U>
+    //static auto tueWas(bool flag, T f, U d) -> decltype (f + d) 
+    //{
+    //    if (flag) {
+    //        return d;
+    //    }
+    //    else {
+    //        return f;
+    //    }
+    //}
+
+    template <typename T, typename U>
+    static decltype(std::declval<T>() + std::declval<U>() ) 
+        tueWas(bool flag, T f, U d)
+    {
+        if (flag) {
+            return d;
+        }
+        else {
+            return f;
+        }
+    }
+
+    void test_tuewas()
+    {
+        auto result = tueWas (false, 100.0 ,200l);  // Typableitung
+    }
+
 
     static auto foo(bool flag, float f, double d) -> double
     {
@@ -110,6 +163,40 @@ namespace Auto_Examples {
         auto getName() const { return m_name; }
         auto getMobileNumber() const { return m_number; }
     };
+
+
+
+    class Person
+    {
+        std::string m_name;
+
+    public:
+        Person() : m_name{} {}
+
+        Person(const std::string& name)
+            : m_name{ name } 
+        {}
+
+        //std::string getName() const { 
+        //    return m_name;
+        //}
+        // versus
+        const std::string& getName() const {
+            return m_name;
+        }
+    };
+
+    void testPerson()
+    {
+        Person p("Hans");
+
+       // const std::string& who = p.getName();
+        //std::string who = p.getName();
+    
+        const auto& who = p.getName();
+    }
+
+
 
     // ---------------------------------------------------------------------
 
@@ -242,6 +329,9 @@ namespace Auto_Examples {
 void main_auto()
 {
     using namespace Auto_Examples;
+
+    testPerson();
+
     test_01();
     test_02();
     test_03();
