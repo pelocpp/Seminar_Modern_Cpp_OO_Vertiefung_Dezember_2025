@@ -35,7 +35,7 @@ namespace MoveSemantics {
         }
 
     private:
-        char* m_string;
+        char* m_string;  // Klassische Zeiger
     };
 
     class Point

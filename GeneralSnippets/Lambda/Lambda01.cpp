@@ -238,7 +238,7 @@ namespace Lambdas {
         return lambda;
     }
 
-    static auto test_09_helper_b() {
+    static auto test_09_helper_b() noexcept {
 
         int n = 1;
         int m = 2;

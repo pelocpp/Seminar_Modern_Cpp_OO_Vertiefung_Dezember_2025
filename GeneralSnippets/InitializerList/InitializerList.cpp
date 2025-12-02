@@ -1,10 +1,26 @@
 // =====================================================================================
-// InitializerList.cpp // std::initializer_list
+// InitializerList.cpp // std::initializer_list // C++ 11
 // =====================================================================================
 
 module modern_cpp:initializer_list;
 
 namespace InitializerList {
+
+    bool evaluateValue(int value)
+    {
+        if (value < 0) {
+            std::println("Wrong Value");
+            return false;
+        }
+        else if (value > 10) {
+            std::println("Wrong Value");
+            return false;
+        }
+        else {
+            // do something with the value
+            return true;
+        }
+    }
 
     // function using std::initializer_list
     static int adder (std::initializer_list<int> list)
@@ -34,7 +50,9 @@ namespace InitializerList {
     static void test_01() {
 
         // testing functions expecting lists in function call
-        int sum = adder({ 1, 2, 3, 4, 5 });
+
+        int sum = adder ( { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 } );
+        
         std::cout << sum << std::endl;
 
         print({ 1, 2, 3, 4, 5 });
@@ -66,14 +84,15 @@ namespace InitializerList {
     };
 
     // container-like classes
-    class Polygon {
+    class Polygon
+    {
     public:
-        Polygon(std::initializer_list<Point> points)
+        Polygon(std::initializer_list<Point> points)  // Stack
             : m_points{ points }
         {}
 
     private:
-        std::vector<Point> m_points;
+        std::vector<Point> m_points;  // Heap
     };
 
     static void test_03() {
@@ -174,6 +193,9 @@ namespace InitializerList {
 void main_initializer_list()
 {
     using namespace InitializerList;
+
+  //  evaluateValue(5);
+
     test_01(); 
     test_02();
     test_03();

@@ -16,10 +16,22 @@ Back-to-the-Roots: Classic C++ ==> Modern C++
 
 ToDo-Liste:
 
-noexcept
-
+std::expected
 
 ==========================================
+
+Mittwoch: 
+
+Utility-Klassen
+
+Type-Traits
+
+Threading
+
+Variadische Templates // Folding
+
+==========================================
+
 
 Seminarinhalt
 
@@ -672,22 +684,293 @@ d) Was muss ich tun, um eine echte Kopie zu erhalten ???
 e) Kann man ein MyString-Objekt verschieben ???
 
 
+=====================================================
+
+
+Siehe Ausarbeitung in Datei "Seminar_02_Aufgabe_MyString.cpp"
+
+
+    class MyString
+    {
+    public:
+        // extrem einfach // nur zum Demonstrieren
+        MyString() {
+            m_string = new char[6];
+            strcpy_s(m_string, 6, "ABCDE");
+        }
+
+        MyString(const MyString& other) {
+            // Ist im Prinzip falsch .. weil von other keine Kopie erzeugt wird
+            m_string = new char[6];
+            strcpy_s(m_string, 6, "ABCDE");
+        }
+
+        // Ein Destruktor wird am ENDE des Scopes AUTOMATISCH aufgerufen
+        ~MyString() {
+            delete[] m_string;
+        }
+
+    private:
+        char* m_string;
+
+        smart_ptr <char>   // sicherstellen, dass delete [] aufgerufen wird
+    };
+
+
+1. Problem: 
+
+Zeichenkette 
+
+Feld / Array von Zeichen:
+
+Ein echtes C++ Problem:
+-----------------------
+
+a) int* ptr  = new int (123);    // scalar new
+b) int* ptr = new int [100];     // array new
+
+delete:
+
+a) delete ptr;                  // scalar delete
+b) delete[] ptr;                // array delete
+
+
+2. Problem:
+
+class MyString
+{
+   ...
+
+private:
+
+   std::unique_ptr<char[]>  oder
+   std::shared_ptr<char[]>
+};
+
+A) Erster Ansatz:  std::shared_ptr<char[]>
+
+MyString s1;
+
+MyString s2;
+
+s2 = s1;   // s2 soll eine echte Kopie von s1 sein 
+
+             // Hmmm, da ist std::shared_ptr nicht der richtige Kandidat.
+
+
+Ausprobieren // lernen // besser zu werden
+
+Learning by Doing !!!
+
+Wie kann delete [] sichergestellt werden ???
+
+=============================================
+
+Detected memory leaks!
+Dumping objects ->
+C:\Peter_Loos\GeneralSnippets\Seminar_02_Aufgabe_MyString.cpp(247) : {164} normal block at 0x0000021D1EAB23D0, 40 bytes long.
+ Data: <                > CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD CD 
+Object dump complete.
+
+=============================================
+
+noexcept
+
+Ist eine Optimierung:
+
+A) Vorwiegend: Code Size
+
+B) Runtime: Laufzeit // weniger 
+
+Whyyyyyyyyyyyyyy
+
+Ein guter Code Optimizer // Code Generator 
+umspringt die pessimistischen Throw/Catch Anweisungen elegant.
+
+
+Coding:  Pessimization 
+
+27
+
+It's mostly a play on words, a pessimist is the opposite of an optimist.
+And pessimisation is writing less than optimal code.
+
+
+Pessimization: Man schreibt Code für an sich selten eintretende Fälle
+
+Beispiel
+
+// Zulässiger Wertebereich: [0 .. 10]
+bool evaluateValue(int value)
+{
+     if (value < 0) {
+        printf("Wrong Value");
+     }
+     else if (value > 10) {
+        printf("Wrong Value");
+     }
+     else {
+        // do something with the value
+     }
+} 
+
+bool evaluateValue(int value)
+{
+     if (value >= 0 && value <= 10) {
+        // do something with the value
+     }
+     else  // < NUll
+        printf("Wrong Value");
+     }
+} 
 
 
 
 
+Frage: getter  
+
+int length () { return m_length; } noexcept
+
+
+const std::string& getName() const noexcept{ return name; }
+   // hier wird eine Referenz zurückgeben // kann nix schief gehen
+
+versus
+
+std::string getName() const noexcept{ return name; }
+
+   // hier wird eine Kopie zurückgeben // könnte schief gehen // brandgefährlich
 
 
 
 
+        // copy semantics
+        BigData(const BigData&);                  // copy c'tor
+        BigData& operator= (const BigData&);      // copy assignment
+
+        // move semantics
+        BigData(BigData&&) noexcept;              // move c'tor
+        BigData& operator= (BigData&&) noexcept;  // move assignment
+
+A) In Methoden können Ausnahmen eintreten
+
+zB:  Aufruf von new
+
+   int* ptr = new int(123);
+
+   if (ptr == nullptr) {
+   
+       help("out of memory");  // Illusion
+   }
+
+   Wann - wenn überhaupt - macht man das ???
+
+   A) Wenn 
+
+    int* ptr = new int(123);
+
+    nicht klappt: Bin am Ende.
+
+B) int* ptr = new int[1000000];
+
+Will große Bereiche reservieren.
+
+Hier ergibt es Sinn.
+
+
+A) In Methoden können Ausnahmen eintreten
+  
+    new ==> std::bad_alloc
+
+B) Was bedeutet Exception Handling:
+
+  Es muss einiges an Maschinecode erzeugt werden,
+  um Ausnahmen zu fangen.
+
+  Und wenn nicht: Die Ausnahme wird weitergeleitet an die rufende Methode 
+  // Stack Unwinding
+
+C) Es gibt Methoden, in denen kann KEINE Ausnahme eintreten.
+
+   Methoden, die nur aus Wertzuweisungen bestehen.
+
+       // move semantics
+    BigData::BigData(BigData&& data) noexcept {  // move c'tor
+
+        std::println("move c'tor");
+
+        m_data = data.m_data;   // shallow copy
+        m_size = data.m_size;
+        data.m_data = nullptr;  // reset source object, ownership has been moved
+        data.m_size = 0;
+
+        // Stack Unwinding Code nicht notwendig
+    }
+
+
+=========================================================
+
+Behandlung von Ausnahmen:
+
+A) Return Code
+
+B) Ausnahmen
+
+C) std::expected
+
+=========================================================
+
+Initializer Liste
+================
+
+Embedded Programming // Performanz
+
+std::initializer_list:      ==> Stack !!!!!!! // push 
+
+std::vector                 ==> Heap // new // delete
+
+Konflikt:
+
+
+std::vector<int> vec( 10 );  // Size: 10 , Alle Elemente: 0
+
+std::vector<int> vec{ 10 };  // Size: 1, Element: 10
+
+std::string s ( 10, '!');   count // ch      count Zeichen 'ch'   
+
+std::string s { 10, '!'};   "X!"   X = Zeichendarstellung von 10
+
+
+=========================================================
+
+constepr
+
+Ist was Neues :)
+
+        constexpr Complex c3 = c1 + c2;  // 4.0  // 5.0
+00007FF7A035F6E0  movss       xmm0,dword ptr [__real@40800000 (07FF7A0593EC0h)]  
+00007FF7A035F6E8  movss       dword ptr [c3],xmm0  
+00007FF7A035F6F0  movss       xmm0,dword ptr [__real@40a00000 (07FF7A0593EC4h)]  
+00007FF7A035F6F8  movss       dword ptr [rbp+8Ch],xmm0  
+
+
+        /*constexpr*/ Complex c3 = c1 + c2;  // 4.0  // 5.0
+00007FF76057F46F  lea         r8,[c2]  
+00007FF76057F473  lea         rdx,[c3]  
+00007FF76057F47A  lea         rcx,[c1]  
+00007FF76057F47E  call        ConstExprComplex::Complex::operator+ (07FF7604E2049h)  
 
 
 
 
+constexpr:
+
+C in the very beginnings:
+
+#define
+
+C-Makros  seeeehr alt
 
 
-
-
-
-
+constexpr   // new // delete
 

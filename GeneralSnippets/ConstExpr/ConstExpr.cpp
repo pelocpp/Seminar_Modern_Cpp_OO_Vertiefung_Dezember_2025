@@ -6,6 +6,28 @@ module modern_cpp:const_expr;
 
 namespace ConstExprComplex {
 
+    void test_lambdas()
+    {
+        [] {};
+        []() {};
+
+        auto nothing = []() {};
+
+        auto eins = []() { return 1; };
+
+        auto result = eins();
+
+        constexpr auto nochmalEins = []() { return 1; };
+
+        constexpr auto value = nochmalEins();
+
+        constexpr auto sum = [](int a, int b) {
+            return a + b;
+            } (1, 2);
+    }
+
+
+
     class Complex
     {
     private:
@@ -15,11 +37,13 @@ namespace ConstExprComplex {
     public:
         // c'tors
         constexpr Complex() : m_real{ }, m_imag{ } {}
-        constexpr Complex(float real, float imag) : m_real{ real }, m_imag{ imag } {}
+        constexpr Complex(float real, float imag) 
+            : m_real{ real }, m_imag{ imag }
+        {}
 
         // getter
-        constexpr float real() const { return m_real; }
-        constexpr float imag() const { return m_imag; }
+        constexpr float real() const noexcept { return m_real; }
+        constexpr float imag() const noexcept { return m_imag; }
 
         // operators
         constexpr Complex operator+ (const Complex& other) const
@@ -33,12 +57,14 @@ namespace ConstExprComplex {
     static void testComplex()
     {
         constexpr Complex c0{ };
+
         constexpr Complex c1{ 1.0, 2.0 };
+
         constexpr Complex c2{ 3.0, 3.0 };
 
-        constexpr float r1 = c1.real();
-        constexpr Complex c3 = c1 + c2;
-        constexpr float r2 = c3.real();
+        constexpr float r1{ c1.real() };
+        constexpr Complex c3{ c1 + c2 };  // 4.0  // 5.0
+        constexpr float r2{ c3.real() };
 
         // verify 'constness' with the help of disassembly and
         // https://www.h-schmidt.net/FloatConverter/IEEE754de.html
@@ -66,7 +92,7 @@ namespace ConstExprDynamicData {
 
     static void testDynamicData()
     {
-        constexpr int sum = naiveSum(10);
+        constexpr int sum = naiveSum(5);  // 15
         std::println("Sum from 1 up to 10: {}", sum);
     }
 }
@@ -140,6 +166,7 @@ namespace ConstExprPow {
 
 void main_constexpr()
 {
+    ConstExprComplex::test_lambdas();
     ConstExprComplex::testComplex();
     ConstExprDynamicData::testDynamicData();
     ConstExprPow::testPower();

@@ -24,7 +24,7 @@ constexpr int TABLE_SIZE = 256;
 
 template<uint8_t POLYNOM>
 constexpr auto crcTable{
-    []() {
+    [] () {
         std::array<uint8_t, TABLE_SIZE> A {};
         for (int i = 0; i < TABLE_SIZE; i++) {
             A[i] = i;
