@@ -56,6 +56,14 @@ std::optional, std::variant, std::any (C++17)
 
 ==========================================
 
+Smart Pointer
+
+Initialisiererlisten
+
+constexpr
+
+==========================================
+
 == Was sind meine Erwartungen
 
 == Wo stehe ich ... 
@@ -431,4 +439,255 @@ Class template std::function is a general-purpose polymorphic function wrapper.
  Objekte bestehen aus Methoden und Membervariablen.
  
  Wo sind die Membervariablen eines Lambda-Objekts :)
+
+ ======================================================
+ 
+ Was ist das Problem von new und delete ???
+
+ Das delete kann / wird vergessen ...
+
+ Andere Formulierung: 
+
+   Wer new aufruft, ist der Besitzer des Pointers
+
+ Komplexer Ablauf
+
+ Unerwartetes break;
+
+ Idee:
+
+ a) man verwende new und delete überhaupt nicht
+
+ b) Man verwende hierzu Hüllenobjekte
+
+ c) Why:  Hüllenobjekte OO
+
+ d) OO: Konstruktor / Destruktor
+
+ e) Destruktor: Dieser wird DETERMINISTISCH aufgerufen
+
+   Der Aufruf wird NICHT vergessen.
+
+   {
+      Wrapper obj;
+
+      ....
+
+      for ....
+         break;
+
+      oder:
+
+      throw // Exception
+
+   
+   }  <== Destruktor obj;  // delete ptr;
+
+f) Neue Zuständigkeiten:
+
+   Konstruktor  // Hüllenobjekts // new
+
+   ...
+
+   Destruktor // delete ptr;
+
+g) auto_ptr   deprecated ...
+
+h) std::unique_ptr
+   std::shared_ptr, std::weak_ptr
+
+Diesen Klassen obliegen unterschiedliche Strategien:
+
+i) std::unique_ptr
+
+  Ein std::unique_ptr-Objekt kann zu einem Zeitpunkt nur
+  EINEN Besitzer / Owner haben.
+
+
+ii) std::shared_ptr
+
+  Ein std::shared_ptr-Objekt (bzw. der von ihm verwaltete Pointer)
+  kann zu einem Zeitpunkt MEHRERE Besitzer / Owner haben.
+
+=======
+
+Muster in Variablen // Debug-Modus von Visual C++:
+
+CC: Nicht vorbelegt - Stack
+
+DD: Heap - aber bereits freigegen
+
+CD: HEAP - reserviert, aber nicht vorbelegt.
+
+=======
+
+Smart Pointer:
+
+a) Aus einem Unterprogramm "raus"  // Rückgabe
+b) In ein Unterprogramm "hinein"  // Übergabe
+
+================
+
+Destruktor eines std::shared_ptr:
+
+Referenzzähler:
+
+1 => 2 => 3 => 2 => 1 => 0: Jetzt wird das delete des Zeigers aufgerufen.
+
+Leichte Ähnlichkeiten:
+----------------------
+
+Reference Counting:  Garbage Collector
+
+JVM: GC // Reference Counting // Wenn 0 erreicht: Markierung gesetzt:
+
+   Objekt nicht mehr erreichbar // reachable
+
+   Zu einem "späteren" Zeitpunkt (idle): Dann kommen die delete's 
+
+================================
+
+Was ist mit std::weak_ptr ????
+
+Why ??????????????????
+
+===> Aussage:  Ein std::shared_ptr - Objekt "funktioniert nicht immer" ???
+
+               soll bedeuten: Der Speicher wird nicht immer freigegeben.
+
+
+================================
+
+i) std::weak_ptr:  Generelle Arbeitsweise
+
+ii) Whyyyyyyyyyyyy: Was ist das eigentliche Problem ???
+
+================================
+
+Für was werden Weak-Ptr verwendet,
+
+wenn sie keinen Zugang garantieren können ???
+
+Für Teile der SW, die KEINEN Anspruch auf BESITZ erheben kann / möchte.
+
+
+
+a) Ich nehme gleich einen std::shared_ptr.
+
+b) VORSICHT: Ich werde dann hier ein Owner // Besitzer !!!
+
+   Referenz-Counter um 1 nach oben.
+
+   ==> Dieses Objekt kann nicht aus dem Speicher gehen (delete)
+
+c) Visualisierung:
+
+   Business Logik Daten:  Werkzeugmittelverwaltung
+
+   Financial SW:  Objekt für Wertpapiere
+
+   Ein bestimmtes Wertpapier nimmt NICHT am Handel teil.
+
+   Visualisierung würde (std::shared_ptr) zum BESITZER
+   eines Werkzeugmittels // eines Wertpapiers.
+
+d) Observer - Pattern
+
+  
+   Ein Objekt wird beobachtet (Observable)  : Wenn sich Zustand // Daten ändern:
+   Wetter ändert sich // Aktienkurs ändert sich ...
+
+   Von wem: Einem Beobachter (Observer)
+
+   Will Objekt (mit Zustand) zum BESITZER von Beobachtern werden ????
+
+
+
+
+
+e) Man sollte strikt unterscheiden:
+
+   i) Abschnitt meiner SW: Owner
+   ii) Abschnitt meiner SW: Versuche einen Zugang herzustellen, 
+                            muss aber auch nicht sein.
+
+
+Strategie:
+
+i) std::shared_ptr und std::weak_ptr
+
+ii) std::shared_ptr: Wenn BESITZ
+
+iii) In allen anderen Fällen: std::weak_ptr wäre zu bevorzugen.
+
+// ========================================================================
+
+    class MyString
+    {
+    public:
+        // extrem einfach // nur zum Demonstrieren
+        MyString() {
+            m_string = new char[6];
+            strcpy_s(m_string, 6, "ABCDE");
+        }
+
+        MyString(const MyString& other) {
+            // Ist im Prinzip falsch .. weil von other keine Kopie erzeugt wird
+            m_string = new char[6];
+            strcpy_s(m_string, 6, "ABCDE");
+        }
+
+        // Ein Destruktor wird am ENDE des Scopes AUTOMATISCH aufgerufen
+        ~MyString() {
+            delete[] m_string;
+        }
+
+        // print-Methode
+        // Irgendeine Methode, um das Objekt zu ändern
+
+        operator[int index]   // an der Stelle index ein Zeichen ändert.
+
+    private:
+        char* m_string;
+    };
+
+
+Ziel:
+
+A) Klasse  MyString:  Member char* m_string; auf std::shared_ptr umsetzen.
+
+B) Destruktor von MyString hat sich erledigt.
+
+C) Aber eine andere Beobachtung:
+
+   MyString s1;
+   MyString s2;
+
+   s1 = s2;   // geht
+
+   Frage: Ist s1 eine ECHTE Kopie oder nicht ???
+
+d) Was muss ich tun, um eine echte Kopie zu erhalten ???
+
+e) Kann man ein MyString-Objekt verschieben ???
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

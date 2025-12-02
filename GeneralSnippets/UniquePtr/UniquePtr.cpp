@@ -13,15 +13,21 @@ namespace UniquePointerGeneral {
 
     static std::unique_ptr<int> loadUniquePointer()
     {
+        std::unique_ptr<int> dummy;
+
         std::unique_ptr<int> ptr{ std::make_unique<int>(100) };
-        return ptr;
+
+        return ptr;  // Good Idea // Bad Idea // NEVER // Don't do this
+        // return std::move(ptr);  // Good Idea // Bad Idea // NEVER // Don't do this
     }
 
-    static void storeUniquePointer(std::unique_ptr<int>& ptr)
+    static void storeUniquePointer(const std::unique_ptr<int>& ptr)
     {
         std::println("*ptr:    {}", *ptr);
         (*ptr)++;
         std::println("*ptr:    {}", *ptr);
+
+        *ptr = 456;
 
         // take ownership right now:
         // std::unique_ptr<int> ptr2{ std::move(ptr) };
@@ -50,6 +56,10 @@ namespace UniquePointerGeneral {
 
     static void test_01()
     {
+        //std::unique_ptr<int> ptr111;   // ptr // new
+        //std::unique_ptr<int> ptr222;
+        //ptr111 = ptr222;
+
         // create a unique_ptr to an int with value 123
         std::unique_ptr<int> ptr1{ new int{ 123 } };
         // or
@@ -85,7 +95,7 @@ namespace UniquePointerGeneral {
             ptr3 = std::move(ptr2);
             m = *ptr3;
             std::println("*ptr3:   {}", m);
-        }
+        }   // delete bzgl. der mit new allok. Pointers
 
         // Note: pointer behind std::unique_ptr's has been released
     }
@@ -100,7 +110,7 @@ namespace UniquePointerGeneral {
         storeUniquePointer(ptr);
 
         // C++ Core Guidelines
-        storeUniquePointerAlternate(ptr.get());
+        //storeUniquePointerAlternate(ptr.get());
 
         // does this work?
         std::println("*ptr:    {}", *ptr);

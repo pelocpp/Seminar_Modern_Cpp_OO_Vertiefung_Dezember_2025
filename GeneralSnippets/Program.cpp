@@ -62,7 +62,7 @@ int main()
         //main_initializer_list();
         //main_input_output_streams();  
         //main_invoke();
-        main_lambdas();
+        //main_lambdas();
         //main_lambda_and_closure();
         //main_lambdas_this_closure();
         //main_literals();
@@ -105,7 +105,7 @@ int main()
         //main_two_phase_name_lookup();
         //main_type_erasure();
         //main_type_traits();
-        //main_unique_ptr();
+       // main_unique_ptr();
         //main_variadic_templates_introduction();
         //main_variadic_templates_working_on_every_argument();
         //main_variadic_templates_sum_of_sums();
@@ -113,7 +113,7 @@ int main()
         //main_variant();
         //main_virtual_base_class_destructor();
         //main_virtual_override_final();
-        //main_weak_pointer();
+        main_weak_pointer();
 
         //main_exercises();
     }
