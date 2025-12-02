@@ -12,6 +12,7 @@ import std;
 #pragma message(MessageText)
 
 void main_stl();
+void main_my_string();
 
 int main()
 {
@@ -23,6 +24,8 @@ int main()
     // main entry points code snippets
     try
     {
+        main_my_string();
+
         //main_accumulate();
         //main_algorithms();
         //main_allocator();
@@ -113,7 +116,7 @@ int main()
         //main_variant();
         //main_virtual_base_class_destructor();
         //main_virtual_override_final();
-        main_weak_pointer();
+       // main_weak_pointer();
 
         //main_exercises();
     }
