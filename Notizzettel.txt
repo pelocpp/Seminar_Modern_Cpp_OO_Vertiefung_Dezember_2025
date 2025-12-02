@@ -974,3 +974,36 @@ C-Makros  seeeehr alt
 
 constexpr   // new // delete
 
+================================================
+
+Musterlösung für Observer-Pattern:
+
+https://github.com/pelocpp/cpp_design_patterns/blob/master/Patterns/Observer/Resources/Readme.md
+
+https://github.com/pelocpp/cpp_design_patterns/blob/master/Patterns/Observer/ConceptualExample02.cpp
+
+
+    class Subject : public ISubject {
+    private:
+        std::list<std::weak_ptr<IObserver>> m_observers;
+        // std::list<std::shared_ptr<IObserver>> m_observers;
+
+
+
+Observer, so wie sie das Subject kennt, als Weak-Pointer:
+
+lock ==> update
+
+lock ==> nullptr: ignorieren
+
+Oder ganz anders mit std::function<>
+
+
+
+
+
+
+
+
+
+
