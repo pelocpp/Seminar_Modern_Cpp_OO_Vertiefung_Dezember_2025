@@ -4,6 +4,13 @@ Seminar "Modern C++"
 
 Peter Loos
 
+peter.loos@gmx.de
+-----------------
+
+https://github.com/pelocpp
+
+https://github.com/pelocpp/cpp_modern
+
 ==========================================
 
 30+ Jahren SW  // Development // Training
@@ -1161,3 +1168,322 @@ if compile_time
 Multithreading
 ==============
 
+C++  // STL:
+
+Multithreading & STL
+
+std::thread: Klassische Vorgehensweise
+
+Eine Option, um einen Thread anzulegen
+
+// b) std::jthread
+
+// c) std::async // Promise // Future
+
+Historisch: C++ 11  // 2011
+
+Threading API: Klein geraten, "übersichtlich"
+
+Ab C++ 20 und aufwärts: API umfangreicher 
+
+Thread: OS ==> ID   ( passiv )
+
+=============================================
+
+Join && Detach:
+
+Thread   std::thread ==> CreateThread
+
+==> OS: Win32 CreateThread 
+
+If the function succeeds,
+the return value is a handle to the new thread.
+
+Die Resources des Threads aufzuräumen.
+
+In C++:   
+
+a) Join:  Kümmert sich um die Resources:
+   Nachteil: Ist BLOCKIEREND.
+
+
+b) detach:  Kümmert auch um die Resources:
+   Vorteil: Ist NICHT BLOCKIEREND.
+   Schiebt die Resources (bzw. deren Handle) auf den Heap
+   Um bei Ende des Threads diese freigeben zu können.
+
+Beobachtung:
+
+Detected memory leaks!
+Dumping objects ->
+{188} normal block at 0x00000246B7053FE0, 16 bytes long.
+ Data: <         0      > 02 00 00 00 CD CD CD CD B0 30 13 A2 F7 7F 00 00 
+{186} normal block at 0x00000246B7054580, 16 bytes long.
+ Data: <         0      > 01 00 00 00 CD CD CD CD B0 30 13 A2 F7 7F 00 00 
+Object dump complete.
+Das Programm "[12324] 01_Thread.exe" wurde mit Code 0 (0x0) beendet.
+
+====================================================================
+
+Beispiel:
+
+int-Variable: counter
+
+a) counter wird mit 0 vorbelegt.
+
+b) counter wird 1'000'000 mal hochgezählt
+
+c) counter wird 1'000'000 mal runtergezählt
+
+d) Hoch- und Runterzählen findet in 2 Threads statt.
+
+
+Frage:  Welcher Wert steht in counter ???
+
+Ich würde 0 sagen.
+
+Problem:
+
+                ++m_counter;
+// Lesen von 'm_counter'
+00007FF65F8729A3  mov         rax,qword ptr [this]  
+00007FF65F8729AA  mov         eax,dword ptr [rax] 
+
+// hochzählen // Register (Akku)
+00007FF65F8729AC  inc         eax  
+
+XXX: Interrupt // Thread Wechsel  <====================
+
+// Rückschreiben des Akkus in die Variable 'm_counter'
+00007FF65F8729AE  mov         rcx,qword ptr [this]  
+00007FF65F8729B5  mov         dword ptr [rcx],eax  
+
+Wann kann ein Thread-Wechsel stattfinden ??? Immer
+
+Wie kann ein Ablauf eines Programms unterbrochen werden ???
+Interrupt (Timer)
+
+m_counter: 100 => 101 => 102  => 103 : Unterbrechung bei XXX
+
+Was passiert bei einem Thread-Wechsel:
+== Es werden alle Register gerettet : Auf den Stack
+
+== Yes: Jeder Thread hat einen eigenen Stack - (Abschnitt)
+
+Es geht in einem anderen Thread weiter:
+
+103 => 102  => 101  => 100  => 99 // Wechsel !!
+
+Es geht nach XXX weiter:
+
+Zuvor werden alle Register RESTAURIERT:  EAX = 103
+
+// Rückschreiben des Akkus in die Variable 'm_counter'
+00007FF65F8729AE  mov         rcx,qword ptr [this]  
+00007FF65F8729B5  mov         dword ptr [rcx],eax  
+
+ 103 wird in 'm_counter' reingeschrieben
+
+Lösung:
+
+Diese 5 Maschinenbefehle dürfen NICHT unterbrochen werden !!!!!!!!!!
+
+Diese  5 Maschinenbefehle  müssen einen atomaren Charakter haben.
+
+Lösung:
+
+KEINE Lösung: Mit C/C++ Sprachmitteln (if, while, ...)
+
+OS:  Win32 : InterlockedIncrement
+
+Lösung mit OS-Hilfe:
+
+a) Interrupt-Sperre
+
+b) Multi-Core System:   Bussperre (Datenbus)
+
+=========================================================
+
+Problem:
+
+Gemeinsame Daten // 2 oder mehr Threads verwendet werden
+
+Nicht: ++
+
+Zweite Lösung: Mutex
+
+Objekt:     std::mutex m;  
+
+            for (size_t n{}; n != NumIterations; ++n) {
+
+                m.lock();
+                
+                ++m_counter;   // kritische Abschnitt
+                
+                m.unlock();
+
+            }
+
+Mutual Exclusion // Gegenseitiger Ausschluss
+
+Folge:  Zwangsserialisierung
+
+========================================================================
+
+RAII - Idiom
+------------
+
+RAII:  Resource Acquisition Is Initialization 
+
+Ähnliche Idee:  Hüllen-Objekte für new / delete
+
+a) Hüllen-Objekte für ein Mutex-Objekt:
+
+   i)  Konstruktor: lock()
+   ii) Destruktor:  unlock()
+
+Name des Klasse des  Hüllen-Objekts:  std::lock_guard  "Lock-Wächter"
+
+
+========================================================
+
+std::condition_variable
+
+A) Bisher:
+   Konflikt // Das Problem gemeinsamer Daten // Zwangsserialisierung
+
+b) Kooperation:
+
+   Ein Thread erzeugt Daten // Berechnung ...
+   Ein zweiter Thread wartet auf diese Daten 
+
+   Ad-Hoc Lösung:
+
+   Der wartende Thread:  Polling  // Rechenzeit // Performanz // Bad
+
+   We can do better: std::condition_variable
+
+   2 zentrale Methoden:
+
+   == wait
+   == notify
+
+===========================================================
+
+
+Kann ein Thread ein Ergebnis zurückliefern ???
+
+std::thread: Nein
+
+std::async:  Ja
+
+Hier kommt ein std::future Objekt ins Spiel:
+
+Dieses Objekt ist ein Datenkanal zwischen
+Thread und Thread-Erzeuger.
+
+===> schreiben: Die return-Anweisung der Thread-Funktion
+<==  lesen:     get() Methode
+
+get()
+
+Was ist, wenn das Ergebnis noch NICHT vorliegt: Blockade,
+              solange, bis das Ergebnis vorliegt.
+
+Was ist, wenn das Ergebnis vorliegt:  Es wird sofort / direkt zurückgegeben
+
+
+Multithreading und Blockaden:
+
+Sind Blockaden:  Sind ein Problem //
+
+                 können zu einem Problem werden
+
+
+                 Sollte man vermeiden ....
+
+Es gibt am Future-Objekt auch andere Möglichkeiten:
+
+
+========================================================
+
+Multi-Threading:
+
+C++
+
+==> OS
+
+Windows // Linux // Größeres
+
+Win32: CreateThread 
+
+Nachteil: Wenn ich die Thread-Funtion erneut ausführen möchte,
+ muss die Win32 API-Funktion CreateThread ERNEUT aufgerufen werden.
+
+Web-Server:
+
+REST-API:
+
+Viele Requests ==> Separaten Thread: Das kostet zu viel Memory.
+
+Neue Konzepte: Thread-Pool
+
+Antwort von OS Herstellern für größere Anwendungen.
+
+QueueUserWorkItem :    Simpel
+
+std::async: ........ which might be a part of a thread pool.
+
+std::async ==> Thread Pool:  "might be"
+
+According to MSDN, the task class uses the Windows ThreadPool as its scheduler.
+
+============================================================
+
+Ab C++ 17:
+
+std::jthread
+
+
+j => joinable 
+
+Detail:
+
+class std::jthread : public std::thread {
+};
+
+// detach ....
+
+=============================================================
+
+std::latch   		(since C++20)
+
+
+Riegel // Schloss ....
+
+Countdown -Zahler in Verbindung mit einem wait:
+
+Verschiedene Threads:  Atomic  ... on board.
+
+Methode count_down
+
+Methode wait:      3 => 2  =>  1  => 0: Jetzt wacht wait auf ...............
+
+Beispiel:
+
+Szenario:
+
+Master - Slave:
+
+Master-Anwendung:
+
+Diese initiiert viele Worker-Threads ...
+und kann erst weiterarbeiten, wenn alle Worker-Threads fertig sind.
+
+========================================================
+
+Parallelisierung von ca. 50 STL Algorithmen
+
+https://www.modernescpp.com/index.php/parallel-algorithm-of-the-standard-template-library/
+
+========================================================
