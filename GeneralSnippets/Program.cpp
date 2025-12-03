@@ -43,7 +43,7 @@ int main()
         //main_concepts_requires_classes();
         //main_concepts_requires_functions();
         //main_const_variants();
-        main_constexpr();
+       // main_constexpr();
         //main_constexpr_crc();
         //main_constructor_invocations();
         //main_copy_move_elision();
@@ -61,7 +61,7 @@ int main()
         //main_functional_programming();
         //main_functional_programming_alternate();
         //main_generate();
-        //main_generic_functions();
+       // main_generic_functions();
       //  main_initializer_list();
         //main_input_output_streams();  
         //main_invoke();
@@ -75,7 +75,7 @@ int main()
         //main_modularized_standard_library(); 
         //main_modules();
        // main_move_semantics();
-        //main_optional();
+      //  main_optional();
         //main_perfect_forwarding();
         //main_placement_new();
         //main_println();
@@ -95,7 +95,7 @@ int main()
         //main_stl();
         // 
         //main_string_view();
-        //main_structured_binding();
+      //  main_structured_binding();
         //main_templates_class_basics_01();
         //main_templates_class_basics_02();
         //main_templates_function_basics();
@@ -104,7 +104,7 @@ int main()
         //main_templates_specialization();
         //main_to_underlying();
         //main_transform();
-        //main_tuple(); 
+       // main_tuple(); 
         //main_two_phase_name_lookup();
         //main_type_erasure();
         //main_type_traits();
@@ -113,7 +113,7 @@ int main()
         //main_variadic_templates_working_on_every_argument();
         //main_variadic_templates_sum_of_sums();
         //main_variadic_templates_mixins();
-        //main_variant();
+        main_variant();
         //main_virtual_base_class_destructor();
         //main_virtual_override_final();
        // main_weak_pointer();

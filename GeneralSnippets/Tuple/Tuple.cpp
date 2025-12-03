@@ -2,6 +2,10 @@
 // Tuple.cpp // std::tuple
 // =====================================================================================
 
+module;
+
+#include <tuple>
+
 module modern_cpp:tuple;
 
 namespace TupleSamples {
@@ -34,6 +38,10 @@ namespace TupleSamples {
         std::get<0>(values) = 'M';
         std::get<2>(values) = 135.79;
 
+        // oder
+        auto& x = std::get<2>(values);
+        x = 123.456;
+
         // printing tuple values again
         {
             auto value1{ std::get<0>(values) };
@@ -49,6 +57,25 @@ namespace TupleSamples {
     // demonstrating use of std::vector with std::tuple elements
 
     using Row = std::tuple<int, char, double, std::string>;
+
+    // Visual C++
+
+    // oder zB: https://wandbox.org/
+
+    template <typename T1, typename T2, typename T3, typename T4>
+    using GeneralRow = std::tuple<T1, T2, T3, T4>;
+
+    static void test_general_row()
+    {
+        GeneralRow<int, double, std::string, std::string> row1;
+
+        auto value1{ std::get<0>(row1) };
+        auto value2{ std::get<1>(row1) };
+        auto value3{ std::get<2>(row1) };
+
+        std::print("The modified values of tuple are : ");
+        std::println("{} - {} - {}", value1, value2, value3);
+    }
 
     static std::string rowToString(const Row& row)
     {
@@ -84,6 +111,8 @@ namespace TupleSamples {
 
     static void test_03()
     {
+        // using Row = std::tuple<int, char, double, std::string>;
+
         Row row1{ 10, 'A', 1.11, "Mueller" };
         Row row2{ 11, 'B', 2.22, "Sepp" };
         Row row3{ 12, 'C', 3.33, "Hans" };
@@ -102,6 +131,9 @@ namespace TupleSamples {
         std::println("Value: {}", val);
         std::println("Name:  {}", name);
 
+        // Range-Based Loop
+        // Mit Doppelpunkt:
+        //   auto name : container
         for (const auto& [id, abbr, val, name] : mySheet)
         {
             std::println("Id:    {}", id);

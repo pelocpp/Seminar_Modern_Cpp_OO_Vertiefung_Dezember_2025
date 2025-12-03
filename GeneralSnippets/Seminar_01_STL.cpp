@@ -41,8 +41,8 @@ static void main_stl_02()
 static void main_stl_03()
 {
 	// STL Container
-	//std::vector<int> numbers;
-	 std::list<int> numbers;
+	std::vector<int> numbers;
+	// std::list<int> numbers;
 
 	numbers.push_back(1);
 	numbers.push_back(2);
@@ -54,7 +54,7 @@ static void main_stl_03()
 	// Realisierung einer solchen Iterator-Klasse: 
 	// Die bringt jeder Container selber mit
 
-//	std::vector<int>::iterator pos = numbers.begin();
+	//std::vector<int>::iterator pos = numbers.begin();
 	auto pos = numbers.begin();
 
 	if (pos == numbers.end()) {
@@ -102,9 +102,9 @@ static void main_stl_04()
 	numbers.push_back(2);
 	numbers.push_back(3);
 
-	//std::vector<int>::iterator pos = numbers.begin();
+	std::vector<int>::iterator pos = numbers.begin();
 	//std::vector<int>::iterator last = numbers.end();
-	auto pos = numbers.begin();
+	//auto pos = numbers.begin();
 	auto last = numbers.end();
 
 	while (pos != last) {

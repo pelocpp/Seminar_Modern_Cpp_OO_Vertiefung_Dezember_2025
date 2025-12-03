@@ -2,6 +2,10 @@
 // Variant.cpp // std::variant
 // =====================================================================================
 
+module;
+
+#include <variant>
+
 module modern_cpp:variant;
 
 namespace VariantDemo {
@@ -114,8 +118,34 @@ namespace VariantDemo {
         std::variant<int, double, std::string> v{ 123 };
 
         // using a generic visitor (matching all types in the variant)
+        // Fallunterscheidung ???
         auto visitor = [](const auto& elem) {
-            std::println("{}", elem);
+
+            // std::remove_const
+
+            using ElemType = decltype (elem);
+            using ElemTypeWithoutRef = std::remove_reference<ElemType>::type;
+            using ElemTypeWithoutRefAndConst = std::remove_const<ElemTypeWithoutRef>::type;
+
+            if constexpr (std::is_same <ElemTypeWithoutRefAndConst, int>::value == true)
+            {
+                std::println("Integer: {}", elem);
+            }
+            else if constexpr (std::is_same <ElemTypeWithoutRefAndConst, double>::value == true)
+            {
+                std::println("Double: {}", elem);
+            }
+            else if constexpr (std::is_same <ElemTypeWithoutRefAndConst, std::string>::value == true)
+            {
+                std::println("std::string: {}", elem);
+
+                std::size_t len = elem.size();
+                std::println("length: {}", len);
+
+            }
+            else {
+                std::println("Unbekannt: {}", elem);
+            }
         };
 
         std::visit(visitor, v);
@@ -129,6 +159,7 @@ namespace VariantDemo {
 
     // -------------------------------------------------------------------
 
+    // Callable // aufrufbares Objekt
     class Visitor
     {
     public:
@@ -337,17 +368,17 @@ void main_variant()
 {
     using namespace VariantDemo;
 
-    test_01();
-    test_02();
-    test_03();
+    //test_01();
+    //test_02();
+    //test_03();
     test_04();
-    test_05();
-    test_06();
-    test_07();
-    test_08();
-    test_09();
-    test_10();
-    test_11();
+    //test_05();
+    //test_06();
+    //test_07();
+    //test_08();
+    //test_09();
+    //test_10();
+    //test_11();
 }
 
 // =====================================================================================

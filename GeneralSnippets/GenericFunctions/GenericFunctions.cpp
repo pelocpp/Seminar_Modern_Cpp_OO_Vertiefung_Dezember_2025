@@ -9,6 +9,11 @@ namespace GenericFunctions {
     // ---------------------------------------------------------------------------------
     // generic function
 
+    // Es gibt 'function' im Maschinencode so oft,
+    // wie die Funktion mit unterschiedlichen Datentypen
+    // aufgerufen wird.
+    // Stärke von C++: Passgenauer MC // Performanz
+
     static void function(auto x, int y) {
         std::cout << "x=" << x << ", y=" << y << std::endl;
     };
@@ -34,6 +39,8 @@ namespace GenericFunctions {
         std::cout << "x=" << x << ", y=" << y << std::endl;
     }
 
+    // explizite Template Spzialisierung
+    // als Demo
     template<>
     void Function<int>(int x, int y)
     {

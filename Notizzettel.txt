@@ -16,6 +16,10 @@ Back-to-the-Roots: Classic C++ ==> Modern C++
 
 ToDo-Liste:
 
+std::optional  - check
+std::variant
+std::any
+std::tuple
 std::expected
 
 ==========================================
@@ -998,12 +1002,162 @@ lock ==> nullptr: ignorieren
 
 Oder ganz anders mit std::function<>
 
+====================================================
+
+std::optional
+
+int value;
+bool isValid = false;
+
+Wann ist der Inhalt gültig
+
+if (value > 0)
+
+if (Value >= 0)
+
+int value;
+bool isValid = false;
+
+===> std::optional
+
+C#:  2147483648 to 2147483648 and null.
+
+
+C++: 2147483648 to 2147483648 and std::nullopt
+
+
+Tel.Nummer:
+
+Festnetz
+Mobile
+Dienst.
+Privat
+
+=======================================
+
+Structured Binding
+
+=======================================
+
+std::tuple
+
+Helferklasse:
+
+std::tuple <char, int, double> values;
+
+Fasst mehrere Daten zusammen.
+
+Eine char, int und double Variable.
+
+Hat Ähnlichkeit zu einer Struktur für Schreibfaule:
+
+struct Data
+{
+   char   aChar;
+   int    anInt ;
+   double aDouble;
+};
+
+Hmm: Mit Structured Binding: Da kommen die Namen der Elemente 
+wieder ins Spiel
+
+==================================================
+
+Keyword using:
+
+using Row = std::tuple<int, char, double, std::string>;
+
+Ist dazu da, um Datentypen mit einen Namen anzusprechen.
+
+Wie eine Variablenvereinbarung - eben nur für Datentypen:
+
+int n;
+
+template <typename T1, typename T2, typename T3, typename T4>
+using GeneralRow = std::tuple<T1, T2, T3, T4>;
+
+
+=====================================================
+
+Online Compiler:
+
+https://wandbox.org/
+
+=====================================================
+
+std::variant:
+
+Fasst mehrere Daten zusammen - zu einem Zeitpunkt
+aber NUR EINE Variable.
+
+Beispiel:
+
+Excel // Google Sheets:  Zelle   // Cell
+
+Zelle:  Wert
+
+ == Currency
+ == Zeichenkette
+ == num. Wert
+ == Datum  // std::chrono
+ == Uhrzeit
+
+std::variant <int, double, std::string> cell;
+
+Bemerkung:
+
+Man kann einen std::variant "besuchen" :)
+
+=====================================================
+
+auto zum Dritten:
+
+A) auto: Vereinbarung von Variablen
+
+B) auto: Rückgabetyp
+
+C) auto: Als Parameter
+
+C) Generische Funktionen: C++ 20
 
 
 
+=====================================================
+
+
+Generische Programmierung
+Metaprogramming
+
+#include <type_traits>
+
+Typspuren
 
 
 
+C++
+
+Stroustrup
+C with Classes
+Objekt-Orientierte Programmiersprache
+
+Bibliothek:  STL   // Standard TEMPLATE Library
+
+Generische Programmierung:
+Alex. Stepanov
+Forschungsschwerpunkt ist die Generische Programmierung und
 
 
+===========================================
+
+Gesucht:
+
+Neue Form der if-Anweisung:
+
+if compile_time
+
+
+=========================================================
+
+Multithreading
+==============
 

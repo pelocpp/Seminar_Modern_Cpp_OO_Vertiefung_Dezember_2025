@@ -37,6 +37,10 @@ namespace OptionalExamples {
     * Using optionals to represent the absence of a value
     */ 
 
+    // std::string   "" 
+
+    // if (phone == -MIN_INT)
+
     class Contact
     {
     private:
